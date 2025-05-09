@@ -53,7 +53,7 @@ function MedicationDispensing() {
 
       <div className="topnav">
         <div className="search-container">
-          <h4>Search Medication Dispensing Records:</h4>
+          <h4>Search Records:</h4>
           <input
             type="text"
             placeholder="Search by any field"

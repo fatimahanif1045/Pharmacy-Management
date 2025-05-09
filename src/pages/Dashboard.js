@@ -8,7 +8,7 @@ function Dashboard() {
       <h3>DASHBOARD</h3>
       <hr />
 
-      <Link to="/patient" className="card">
+      <Link to="/patient">
         <h5 id="p1"> Patient <i className="fa" style={{ fontSize: '100px', opacity: 0.5 }}>&#xf193;</i> </h5>
       </Link>
 
