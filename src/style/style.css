@@ -160,7 +160,7 @@ form{
   font-size: 16px;
   cursor: pointer;
   background-color: white;
-
+  border-radius:4px; 
 
 }
 
@@ -208,9 +208,10 @@ body {
 }
 .topnav input[type=text] {
   padding: 6px;
-  margin-top: 8px;
+  margin: 8px;
   font-size: 17px;
-  border: none;
+  border-radius: 5px;
+
 }
 
 .topnav .search-container button {
