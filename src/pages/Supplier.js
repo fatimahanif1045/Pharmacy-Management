@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../style/style.css'; 
+import '../style/style.css';
 import 'font-awesome/css/font-awesome.min.css';
 
 const Supplier = () => {
@@ -14,20 +14,39 @@ const Supplier = () => {
   ]);
 
   const [newSupplier, setNewSupplier] = useState({ id: '', name: '', contact: '' });
+  const [search, setSearch] = useState(''); // Single search box
 
+  // Handle change in search input
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+  };
+
+  // Handle changes in new supplier input fields
   const handleInputChange = (e) => {
     setNewSupplier({ ...newSupplier, [e.target.name]: e.target.value });
   };
 
+  // Add new supplier
   const addSupplier = () => {
+    if (!newSupplier.id || !newSupplier.name || !newSupplier.contact) {
+      return; // Prevent adding if any field is empty
+    }
+
     setSuppliers([...suppliers, newSupplier]);
-    setNewSupplier({ id: '', name: '', contact: '' });
+    setNewSupplier({ id: '', name: '', contact: '' }); // Reset input fields
   };
 
+  // Delete a supplier
   const deleteSupplier = (id) => {
     setSuppliers(suppliers.filter((s) => s.id !== id));
   };
 
+  // Filter suppliers based on search input across all fields
+  const filteredSuppliers = suppliers.filter((supplier) =>
+    supplier.id.toString().includes(search) ||
+    supplier.name.toLowerCase().includes(search.toLowerCase()) ||
+    supplier.contact.includes(search)
+  );
   return (
     <div className="main">
       <h3>Supplier</h3>
@@ -36,10 +55,16 @@ const Supplier = () => {
       <div className="topnav">
         <div className="search-container">
           <h4>Search Supplier:</h4>
-          <input type="text" placeholder="ID" name="ID" />
-          <input type="text" placeholder="Name" name="Name" />
-          <input type="text" placeholder="Contact" name="Contact" />
-          <button type="submit"><i className="fa fa-search"></i></button>
+          <input
+            type="text"
+            placeholder="Search by ID, Name or Contact"
+            value={search}
+            onChange={handleSearchChange}
+          />
+          <button type="submit">
+            <i className="fa fa-search"></i>
+          </button>
+
           <hr />
 
           <h4><i className="fa fa-plus"></i> Add New Supplier:</h4>
@@ -82,7 +107,7 @@ const Supplier = () => {
           </tr>
         </thead>
         <tbody>
-          {suppliers.map((supplier) => (
+          {filteredSuppliers.map((supplier) => (
             <tr key={supplier.id}>
               <td>{supplier.id}</td>
               <td>{supplier.name}</td>
@@ -94,6 +119,11 @@ const Supplier = () => {
               </td>
             </tr>
           ))}
+          {filteredSuppliers.length === 0 && (
+            <tr>
+              <td colSpan="4" style={{ textAlign: 'center' }}>No matching records found.</td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

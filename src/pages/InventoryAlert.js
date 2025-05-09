@@ -13,51 +13,72 @@ function InventoryAlert() {
     { id: 7, medicationId: 7, type: 'Expiry Date', date: '2023-09-15', description: 'Medication is expiring soon.' },
   ]);
 
-  const [newAlert, setNewAlert] = useState({
-    type: '',
-    description: ''
-  });
+  const [newAlert, setNewAlert] = useState({ type: '', description: '' });
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewAlert(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
   const handleAddAlert = () => {
-    if (!newAlert.type || !newAlert.description) return;
+    if (!newAlert.medicationId || !newAlert.type || !newAlert.description) return;
     const newId = alerts.length ? Math.max(...alerts.map(a => a.id)) + 1 : 1;
     const alertToAdd = {
       id: newId,
-      medicationId: Math.floor(Math.random() * 10) + 1, // Just a random example
+      medicationId: newAlert.medicationId,
       type: newAlert.type,
       date: new Date().toISOString().split('T')[0],
       description: newAlert.description
     };
     setAlerts(prev => [...prev, alertToAdd]);
-    setNewAlert({ type: '', description: '' });
+    setNewAlert({ medicationId: '', type: '', description: '' });
   };
 
   const handleDeleteAlert = (id) => {
     setAlerts(prev => prev.filter(alert => alert.id !== id));
   };
 
+  const filteredAlerts = alerts.filter(alert => {
+    const term = searchTerm.toLowerCase();
+    return (
+      alert.id.toString().includes(term) ||
+      alert.medicationId.toString().includes(term) ||
+      alert.type.toLowerCase().includes(term) ||
+      alert.date.toLowerCase().includes(term) ||
+      alert.description.toLowerCase().includes(term)
+    );
+  });
+
   return (
-    
     <div className="main">
       <h3>Inventory Alert</h3>
       <hr />
 
       <div className="topnav">
         <div className="search-container">
-          <h4>Search:</h4>
-          <input type="text" placeholder="ID" name="ID" />
-          <input type="text" placeholder="Medication ID" name="MedicationID" />
-          <input type="text" placeholder="Type" name="Type" />
-          <input type="text" placeholder="Alert Date" name="AlertDate" />
-          <button type="submit"><i className="fa fa-search"></i></button>
+          <h4>Search Inventory Alerts:</h4>
+          <input
+            type="text"
+            placeholder="Search by any field"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+          <button><i className="fa fa-search"></i></button>
 
           <hr />
           <h4><i className="fa fa-plus"></i> Add New Alert Type:</h4>
+          <input
+            type="text"
+            placeholder="medicationId"
+            name="medicationId"
+            value={newAlert.medicationId}
+            onChange={handleInputChange}
+          />
           <input
             type="text"
             placeholder="Type"
@@ -92,7 +113,7 @@ function InventoryAlert() {
           </tr>
         </thead>
         <tbody>
-          {alerts.map(alert => (
+          {filteredAlerts.map(alert => (
             <tr key={alert.id}>
               <td>{alert.id}</td>
               <td>{alert.medicationId}</td>
@@ -106,6 +127,11 @@ function InventoryAlert() {
               </td>
             </tr>
           ))}
+          {filteredAlerts.length === 0 && (
+            <tr>
+              <td colSpan="6" style={{ textAlign: 'center' }}>No matching records found.</td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

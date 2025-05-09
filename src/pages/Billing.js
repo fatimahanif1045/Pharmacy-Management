@@ -1,9 +1,74 @@
-// pages/Billing.js
-import React from 'react';
-import '../style/style.css'; // Your existing stylesheet
+import React, { useState } from 'react';
+import '../style/style.css';
 import 'font-awesome/css/font-awesome.min.css';
 
 function Billing() {
+  const [billings, setBillings] = useState([
+    { id: 1, prescriptionId: 1, patientId: 1, medicationId: 1, totalAmount: 50, date: '2023-06-01', time: '15:30:00', paymentMethod: 'Credit Card' },
+    { id: 2, prescriptionId: 2, patientId: 3, medicationId: 1, totalAmount: 25.5, date: '2023-06-07', time: '15:30:00', paymentMethod: 'Credit Card' },
+    { id: 3, prescriptionId: 3, patientId: 7, medicationId: 1, totalAmount: 500, date: '2023-06-10', time: '14:30:00', paymentMethod: 'Cash' },
+    { id: 4, prescriptionId: 4, patientId: 6, medicationId: 2, totalAmount: 400, date: '2023-06-12', time: '13:30:00', paymentMethod: 'Cash' },
+    { id: 5, prescriptionId: 5, patientId: 3, medicationId: 4, totalAmount: 200, date: '2023-06-18', time: '10:00:00', paymentMethod: 'Credit Card' },
+    { id: 6, prescriptionId: 6, patientId: 2, medicationId: 3, totalAmount: 500, date: '2023-07-13', time: '13:30:00', paymentMethod: 'Cash' },
+    { id: 7, prescriptionId: 7, patientId: 4, medicationId: 1, totalAmount: 100, date: '2023-07-14', time: '12:45:00', paymentMethod: 'Credit Card' },
+  ]);
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [newBilling, setNewBilling] = useState({
+    id: '',
+    prescriptionId: '',
+    patientId: '',
+    medicationId: '',
+    totalAmount: '',
+    date: '',
+    time: '',
+    paymentMethod: '',
+  });
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value.toLowerCase());
+  };
+
+  const handleInputChange = (e) => {
+    setNewBilling({ ...newBilling, [e.target.name]: e.target.value });
+  };
+
+  const addBilling = () => {
+    const { id, prescriptionId, patientId, medicationId, totalAmount, date, time, paymentMethod } = newBilling;
+    if (!id || !prescriptionId || !patientId || !medicationId || !totalAmount || !date || !time || !paymentMethod) return;
+
+    setBillings([...billings, {
+      id: parseInt(id),
+      prescriptionId: parseInt(prescriptionId),
+      patientId: parseInt(patientId),
+      medicationId: parseInt(medicationId),
+      totalAmount: parseFloat(totalAmount),
+      date,
+      time,
+      paymentMethod
+    }]);
+
+    setNewBilling({
+      id: '',
+      prescriptionId: '',
+      patientId: '',
+      medicationId: '',
+      totalAmount: '',
+      date: '',
+      time: '',
+      paymentMethod: '',
+    });
+  };
+
+  const deleteBilling = (id) => {
+    setBillings(billings.filter((billing) => billing.id !== id));
+  };
+
+  const filteredBillings = billings.filter((billing) => {
+    const values = Object.values(billing).join(' ').toLowerCase();
+    return values.includes(searchTerm);
+  });
+
   return (
     <div className="main">
       <h3>Billing</h3>
@@ -11,29 +76,31 @@ function Billing() {
 
       <div className="topnav">
         <div className="search-container">
-          <h4>Search a Billing:</h4>
-          <input type="text" placeholder="ID" name="ID" />
-          <input type="text" placeholder="Patient ID" name="Patient ID" />
-          <input type="text" placeholder="Medication ID" name="Medication ID" />
-          <input type="text" placeholder="Billing Date" name="Billing Date" />
-          <input type="text" placeholder="Billing Time" name="Billing Time" />
-          <input type="text" placeholder="Payment Method" name="Payment Method" />
-          <button type="submit"><i className="fa fa-search"></i></button>
-
+          <h4>Search Billing Records:</h4>
+          <input
+            type="text"
+            placeholder="Search by any field"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
+          <button type="submit">
+            <i className="fa fa-search"></i>
+          </button>
           <hr />
           <h4><i className="fa fa-plus"></i> Add New Billing:</h4>
-          <input type="text" placeholder="ID" name="ID" />
-          <input type="text" placeholder="Prescription ID" name="Prescription ID" />
-          <input type="text" placeholder="Patient ID" name="Patient ID" />
-          <input type="text" placeholder="Medication ID" name="Medication ID" />
-          <input type="text" placeholder="Total Amount" name="Total Amount" />
-          <input type="text" placeholder="Billing Date" name="Billing Date" />
-          <input type="text" placeholder="Billing Time" name="Billing Time" />
-          <input type="text" placeholder="Payment Method" name="Payment Method" />
-          <button className="btn"><i className="fa fa-plus"></i> Add</button>
+          <input type="text" placeholder="ID" name="id" value={newBilling.id} onChange={handleInputChange} />
+          <input type="text" placeholder="Prescription ID" name="prescriptionId" value={newBilling.prescriptionId} onChange={handleInputChange} />
+          <input type="text" placeholder="Patient ID" name="patientId" value={newBilling.patientId} onChange={handleInputChange} />
+          <input type="text" placeholder="Medication ID" name="medicationId" value={newBilling.medicationId} onChange={handleInputChange} />
+          <input type="text" placeholder="Total Amount" name="totalAmount" value={newBilling.totalAmount} onChange={handleInputChange} />
+          <input type="text" placeholder="Billing Date" name="date" value={newBilling.date} onChange={handleInputChange} />
+          <input type="text" placeholder="Billing Time" name="time" value={newBilling.time} onChange={handleInputChange} />
+          <input type="text" placeholder="Payment Method" name="paymentMethod" value={newBilling.paymentMethod} onChange={handleInputChange} />
+          <button className="btn" onClick={addBilling}>
+            <i className="fa fa-plus"></i> Add
+          </button>
         </div>
       </div>
-
       <hr />
 
       <table>
@@ -51,31 +118,28 @@ function Billing() {
           </tr>
         </thead>
         <tbody>
-          {[
-            [1, 1, 1, 1, 50, '2023-06-01', '15:30:00', 'Credit Card'],
-            [2, 2, 3, 1, 25.5, '2023-06-07', '15:30:00', 'Credit Card'],
-            [3, 3, 7, 1, 500, '2023-06-10', '14:30:00', 'Cash'],
-            [4, 4, 6, 2, 400, '2023-06-12', '13:30:00', 'Cash'],
-            [5, 5, 3, 4, 200, '2023-06-18', '10:00:00', 'Credit Card'],
-            [6, 6, 2, 3, 500, '2023-07-13', '13:30:00', 'Cash'],
-            [7, 7, 4, 1, 100, '2023-07-14', '12:45:00', 'Credit Card'],
-          ].map(([id, pid, patid, medid, amount, date, time, method]) => (
-            <tr key={id}>
-              <td>{id}</td>
-              <td>{pid}</td>
-              <td>{patid}</td>
-              <td>{medid}</td>
-              <td>{amount.toFixed(2)}</td>
-              <td>{date}</td>
-              <td>{time}</td>
-              <td>{method}</td>
+          {filteredBillings.map((billing) => (
+            <tr key={billing.id}>
+              <td>{billing.id}</td>
+              <td>{billing.prescriptionId}</td>
+              <td>{billing.patientId}</td>
+              <td>{billing.medicationId}</td>
+              <td>{billing.totalAmount}</td>
+              <td>{billing.date}</td>
+              <td>{billing.time}</td>
+              <td>{billing.paymentMethod}</td>
               <td>
-                <button className="btn">
+                <button className="btn" onClick={() => deleteBilling(billing.id)}>
                   <i className="fa fa-trash"></i> Delete
                 </button>
               </td>
             </tr>
           ))}
+          {filteredBillings.length === 0 && (
+            <tr>
+              <td colSpan="9" style={{ textAlign: 'center' }}>No matching records found.</td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>
